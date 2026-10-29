@@ -56,13 +56,28 @@ async def send_comment(reply_to_message_id=None):
     except Exception as e:
         print(f"❌ ОШИБКА ОТПРАВКИ: {e}")
 
+# Создаем пустое множество для хранения ID постов, на которые уже ответили
+answered_posts = set()
+
 @dp.message()
 async def handle_group_message(message: types.Message):
     if message.chat.id == CHAT_ID:
         if message.is_automatic_forward:
-            print(f"🔔 Новый пост! ID: {message.message_id}")
+            post_id = message.message_id
+            
+            # ПРОВЕРКА НА ДУБЛИКАТ
+            if post_id in answered_posts:
+                print(f"⚠️ Пост {post_id} уже обработан, пропускаем.")
+                return
+            
+            print(f"🔔 Новый пост! ID: {post_id}")
+            
+            # Добавляем ID в список обработанных
+            answered_posts.add(post_id)
+            
+            # Даем Telegram 2 секунды
             await asyncio.sleep(2) 
-            await send_comment(reply_to_message_id=message.message_id)
+            await send_comment(reply_to_message_id=post_id)
 
 @dp.message(Command("test"))
 async def cmd_test(message: types.Message):
