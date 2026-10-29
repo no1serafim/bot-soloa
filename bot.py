@@ -5,6 +5,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFil
 from aiogram.filters import Command
 from aiohttp import web
 import os
+import aiohttp
 
 logging.basicConfig(level=logging.INFO)
 
